@@ -51,3 +51,4 @@ end
 % Stop streaming
 Cam = Cam.StopStreaming();
 Cam = Cam.Shutdown();
+delete(Cam);
