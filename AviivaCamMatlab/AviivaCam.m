@@ -126,6 +126,8 @@ classdef AviivaCam
             Height = me.GetHeight();
             Image = zeros(Width, Height);
             [Err, Image] = calllib('AviivaCamDll', 'GetImage', Image);
+			
+			pause(0.01);
 
             switch Err 
                 case -1
