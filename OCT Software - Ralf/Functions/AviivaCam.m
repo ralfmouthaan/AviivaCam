@@ -40,7 +40,7 @@ classdef AviivaCam
             Err = calllib('AviivaCamDll', 'Startup');
             switch Err
                 case -1
-                    error('Could find camera. Is camera connected, and is MAC address correct?');
+                    error('Could not find camera. Is camera connected, and is MAC address correct?');
                 case -2
                     error('Unable to connect to camera');
                 case -3

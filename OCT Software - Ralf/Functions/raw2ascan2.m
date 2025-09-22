@@ -38,7 +38,7 @@ function [z, data] = raw2ascan2(data, ReferenceArm, SampleArm)
     a3 = 0; 
 
     % Crops
-    pix = (500:1750).'; % Spectral domain crop
+    pix = (2:2000).'; % Spectral domain crop
     ncrop = 30; % DC crop
     
     % Calibration
@@ -46,9 +46,11 @@ function [z, data] = raw2ascan2(data, ReferenceArm, SampleArm)
     %pix_cal = [1048 1253 1419].'; % Low power
     %pix_cal = [1094 1316 1502].'; % High power
     %pix_cal = [625 1253 1750].';
-    lam_cal = [849-16 849 849+16].'*1e-9;
-    pix_cal = [1018 1248 1498].';
-    
+%     lam_cal = [849-18 849 849+18].'*1e-9;
+%     pix_cal = [500 1000 1400].';
+    lam_cal = [827.47 858.76].'*1e-9; % measured with oceab HR spectrometer 8/8/2025 
+    pix_cal = [646 1.4903e+03].';
+%     
     % Use calibration to determine which pixel is which wavelength
 
     % Fitting function expects data in column format.
@@ -135,7 +137,7 @@ function [z, data] = raw2ascan2(data, ReferenceArm, SampleArm)
         SampleArm = mean(NewSampleArm, 1);
     
         % Now do the subtraction
-        data = data - ReferenceArm - SampleArm;
+        data = data - SampleArm- ReferenceArm;
         data = abs(data);
 
     end
@@ -143,6 +145,6 @@ function [z, data] = raw2ascan2(data, ReferenceArm, SampleArm)
     % Only take the one half of the spectrum/data
     % Removal of DC 
     data = data(ncrop:length(data)/2);
-    z = (1:length(data))*dz/2*8.3; % Divide to account for double-pass? 8.3 even bigger fudge factor?
+    z = (1:length(data))*dz/2*6.06; % Divide to account for double-pass? 9.3 even bigger fudge factor?
 
 end

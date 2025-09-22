@@ -6,21 +6,23 @@
 % or sample arm subtraction
 
 clc; close all;
-clearvars -except Cam Controller dq offsetPI HomeOffset;
+clearvars -except Cam Controller dq offsetPI HomeOffset Offset global_offset global_exposure global_gain;
 
 %% Set up
 
+pause(0.5)
 % Define the placement on the galvo mirror (x y)
 write(dq, [0 0]);
 
 % Moving the sample to the 0-offset
-% Offset = HomeOffset + 0.06;
-% movePI(offsetPI,Offset,'1')
+Offset = HomeOffset + global_offset ;
+movePI(offsetPI,Offset,'1')
 
 MiddleV = 0.0; % This voltage corresponds to the mid-point of the range where the spot is not aberrated
-SpotSize = 30; % Spot size in um
-xrange_um = 2000; % Scan range in um
-NoAscans = round(xrange_um/SpotSize*2);
+SpotSize = 11; % Spot size in um
+xrange_um = 8000; % Scan range in um
+oversampleFactor = 1;
+NoAscans = round(xrange_um/SpotSize*2)/oversampleFactor;
 GalvoCal = 3287; % um per V
 xrange_V = xrange_um/GalvoCal;
 GalvoV = linspace(MiddleV - xrange_V/2, MiddleV + xrange_V/2, NoAscans);
@@ -48,6 +50,7 @@ for n = 1:NoAscans
     [z, dataOCTlin] = raw2ascan2(Image);
     OCTImage(:, n) = dataOCTlin;
 
+    display(max(max(OCTImage(:, n))))
 end
 
 fprintf('Overexposed Percentage = %0.2f\n', NoOverExposed/NoAscans*100)
@@ -59,7 +62,21 @@ OCTImagedB = 20*log10(OCTImage);
 
 figure;
 imagesc(x*1e3, z*1e6, OCTImagedB)
+axis image
 colormap(gray)
-clim([-30 max(max(OCTImagedB))+1])
+clim([-35 max(max(OCTImagedB))+1])
 xlabel('x (\mum)');
 ylabel('z (\mum)');
+title(['Offset = ' num2str((Offset - HomeOffset)*268.2) 'um'])
+
+figure;
+plot(z,mean(OCTImage,2))
+xlabel('z(\mum)')
+ylabel('mean intensity')
+ylim([0,0.9])
+% 
+% 
+% figure;
+% plot(std(OCTImage, 0, 2))
+% xlabel('z(\mum)')
+% ylabel('std intensity')
